@@ -1,0 +1,15 @@
+services:
+  specter-intel:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - backend/.env
+    environment:
+      DATABASE_PATH: /data/intel.db
+    volumes:
+      - intel-data:/data
+    restart: unless-stopped
+
+volumes:
+  intel-data:

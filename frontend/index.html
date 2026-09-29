@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Specter Intel</title>
+  <meta name="description" content="Social media account lookup dashboard powered by EnsembleData.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <!-- ============================== HEADER ============================== -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>
+      </div>
+      <div class="brand-name">Specter<br>Intel</div>
+      <div class="brand-sub">Social Media<br>Intelligence</div>
+      <span class="badge badge-accent">MVP<br>V1.0</span>
+    </div>
+
+    <nav class="nav" aria-label="Primary">
+      <a href="#query" class="nav-link active">Dashboard / Account<br>Search</a>
+      <button type="button" class="nav-link" data-open="history-modal">Search<br>History</button>
+      <button type="button" class="nav-link" data-open="settings-modal">API<br>Settings</button>
+      <a href="/docs" class="nav-link" target="_blank" rel="noopener">Documentation</a>
+    </nav>
+
+    <div class="provider-pill" id="provider-pill">
+      <span class="dot" id="provider-dot"></span>
+      <span><span id="provider-label">EnsembleData API: Connecting…</span><br><span class="muted" id="provider-latency">(Latency —)</span></span>
+    </div>
+
+    <div class="analyst">
+      <div class="analyst-text">Analyst<br>Station 01<br><span class="muted mono">ID: LOCAL-SESSION</span></div>
+      <div class="analyst-avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="currentColor"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================ PAGE HEADER ============================ -->
+  <section class="page-head">
+    <div>
+      <div class="crumbs mono"><span class="crumb-accent">OSINT_CORE</span> / INTELLIGENCE PLATFORM / <strong>ACCOUNT INVESTIGATION</strong></div>
+      <h1>Signal Surveillance &amp; Target Lookup <span class="badge badge-live" id="mode-badge">LIVE MODE</span></h1>
+    </div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-label">Today's Inquiries</div>
+        <div class="kpi-value"><span id="kpi-inquiries">0</span> <small id="kpi-inquiries-delta" class="up"></small></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Quota Remaining</div>
+        <div class="kpi-value"><span id="kpi-quota" class="accent">—</span> <small id="kpi-quota-total" class="muted"></small></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Avg Response</div>
+        <div class="kpi-value"><span id="kpi-latency">—</span> <small id="kpi-latency-note" class="up"></small></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Provider Engine</div>
+        <div class="kpi-value kpi-engine"><span class="dot" id="engine-dot"></span> EnsembleData</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ SEARCH FORM ============================ -->
+  <section class="panel query" id="query">
+    <h2 class="panel-title">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      Universal Identity Query
+    </h2>
+    <p class="panel-desc">Input a public social media handle to extract normalized account telemetry and metrics.</p>
+
+    <form class="query-form" id="search-form" novalidate>
+      <label class="sr-only" for="platform">Platform</label>
+      <div class="select-wrap">
+        <select id="platform" name="platform">
+          <option value="twitter">✕ X / Twitter</option>
+          <option value="instagram">◎ Instagram</option>
+          <option value="tiktok">♪ TikTok</option>
+          <option value="all">⊕ All Platforms</option>
+        </select>
+      </div>
+      <label class="sr-only" for="username">Username</label>
+      <div class="input-wrap">
+        <span class="at">@</span>
+        <input id="username" name="username" type="text" autocomplete="off" spellcheck="false" maxlength="31" placeholder="username">
+        <button type="button" class="clear-btn" id="clear-btn" aria-label="Clear username" hidden>✕</button>
+      </div>
+      <button type="submit" class="btn btn-primary" id="search-btn">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span id="search-btn-label">SEARCH INTEL</span>
+      </button>
+    </form>
+    <p class="field-error" id="field-error" role="alert" hidden></p>
+
+    <div class="targets mono">
+      <span class="muted">TARGETS:</span>
+      <button type="button" class="chip" data-target="nasa">@nasa</button>
+      <button type="button" class="chip" data-target="natgeo">@natgeo</button>
+      <button type="button" class="chip" data-target="bbcnews">@bbcnews</button>
+      <button type="button" class="chip" data-target="github">@github</button>
+      <span class="secure-note"><span class="dot dot-ok"></span> Backend validated via FastAPI &amp; EnsembleData API normalization. Secure key handling.</span>
+    </div>
+  </section>
+
+  <!-- ============================ MAIN GRID ============================ -->
+  <main class="grid">
+    <section class="results" id="results" aria-live="polite">
+      <!-- Rendered by app.js -->
+    </section>
+
+    <aside class="sidebar">
+      <section class="panel">
+        <div class="panel-row">
+          <h2 class="panel-title small">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 4v5h5M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            Recent Inquiries
+          </h2>
+          <button type="button" class="link-btn" id="clear-log">Clear Log</button>
+        </div>
+        <ul class="inquiries" id="recent-list"></ul>
+        <button type="button" class="btn btn-ghost block" data-open="history-modal" id="view-all-btn">View All Historical Telemetry</button>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title small">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6l-8-3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+          System Health &amp; Security
+        </h2>
+        <div class="health-box">
+          <div class="panel-row mono">
+            <span class="muted">RATE LIMIT (PER-IP)</span>
+            <span><strong id="rl-used">0</strong> / <span id="rl-limit">10</span> <span class="muted">req/min</span></span>
+          </div>
+          <div class="meter"><div class="meter-fill" id="rl-meter"></div></div>
+          <div class="panel-row mono small-text">
+            <span class="muted" id="rl-reset">Window Reset: —</span>
+            <span class="ok" id="rl-state">Healthy</span>
+          </div>
+        </div>
+        <div class="health-box">
+          <div class="mono small-text"><span class="dot dot-ok"></span> <strong>NFR-01 COMPLIANT ARCHITECTURE</strong></div>
+          <p class="small-text muted">EnsembleData API keys are kept in server-side environment variables. The browser only sends a username; the key never appears in responses, storage or logs.</p>
+          <div class="mono small-text muted" id="security-line">🔒 Server-side proxy · Input validation · Request timeout 15s</div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="footer mono">
+    <span><strong>SPECTER INTEL</strong> • SOCIAL MEDIA INTELLIGENCE PLATFORM</span>
+    <span class="muted">ENSEMBLEDATA ENGINE</span>
+    <span class="spacer"></span>
+    <span class="muted" id="footer-telemetry">TELEMETRY: —</span>
+    <span class="muted" id="footer-env">ENV: —</span>
+    <span class="muted">© <span id="year"></span> SPECTER INTEL</span>
+  </footer>
+</div>
+
+<!-- ============================ MODALS ============================ -->
+<div class="modal" id="history-modal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="history-title">
+    <div class="panel-row">
+      <h2 class="panel-title" id="history-title">Search History</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close">✕</button>
+    </div>
+    <div class="table-wrap">
+      <table class="history-table mono">
+        <thead><tr><th>Time</th><th>Query</th><th>Platform</th><th>Status</th><th>Results</th><th>Latency</th></tr></thead>
+        <tbody id="history-body"></tbody>
+      </table>
+    </div>
+    <div class="panel-row">
+      <span class="muted small-text mono" id="history-count"></span>
+      <button type="button" class="btn btn-ghost" id="history-more" hidden>Load more</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="settings-modal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="panel-row">
+      <h2 class="panel-title" id="settings-title">API Settings</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close">✕</button>
+    </div>
+    <p class="small-text muted">Configuration is managed on the server through environment variables (<code>backend/.env</code>). Secrets are never sent to the browser.</p>
+    <dl class="settings-list mono" id="settings-list"></dl>
+  </div>
+</div>
+
+<script src="app.js" type="module"></script>
+</body>
+</html>
